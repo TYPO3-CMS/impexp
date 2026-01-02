@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace TYPO3\CMS\Impexp\Tests\Functional\Export;
 
+use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
@@ -173,6 +174,7 @@ final class PagesAndTtContentWithRelationsAndSoftrefsTest extends AbstractImport
     }
 
     #[Test]
+    #[IgnoreDeprecations] // FormPersistenceIdentifier soft reference parser triggers deprecated FileMountStorageAdapter and allowedFileMounts config
     public function exportPagesAndRelatedTtContentWithFlexFormSoftrefs(): void
     {
         $this->importCSVDataSet(__DIR__ . '/../Fixtures/DatabaseImports/pages.csv');
