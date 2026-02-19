@@ -136,9 +136,7 @@ class Export extends ImportExport
             if ($this->getBackendUser()->check('tables_select', $table)) {
                 $statement = $this->execListQueryPid($pid, $table);
                 while ($record = $statement->fetchAssociative()) {
-                    if (is_array($record)) {
-                        $this->exportAddRecord($table, $record);
-                    }
+                    $this->exportAddRecord($table, $record);
                 }
             }
         }
