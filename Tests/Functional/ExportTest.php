@@ -389,4 +389,102 @@ final class ExportTest extends AbstractImportExportTestCase
 
         self::assertFalse($importExportFolder->hasFolder($filesFolderName));
     }
+
+    #[Test]
+    public function filterRecordFieldsRemovesFieldsNotInSubSchemaForTextCType(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, null, [], '', false);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+
+        $row = [
+            'uid' => 1,
+            'pid' => 1,
+            'CType' => 'text',
+            'header' => 'Test Header',
+            'bodytext' => 'Some text',
+            'image' => '1',
+        ];
+
+        $result = $subject->_call('filterRecordFields', 'tt_content', $row);
+
+        // Non-schema fields (uid, pid) are removed
+        self::assertArrayNotHasKey('uid', $result);
+        self::assertArrayNotHasKey('pid', $result);
+        // Type field is always kept
+        self::assertArrayHasKey('CType', $result);
+        // Fields in the "text" sub-schema are kept
+        self::assertArrayHasKey('header', $result);
+        self::assertArrayHasKey('bodytext', $result);
+        // "image" is registered in the main tt_content schema but NOT in "text" sub-schema
+        self::assertArrayNotHasKey('image', $result);
+    }
+
+    #[Test]
+    public function filterRecordFieldsKeepsImageFieldForTextpicCType(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, null, [], '', false);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+
+        $row = [
+            'uid' => 1,
+            'pid' => 1,
+            'CType' => 'textpic',
+            'header' => 'Test Header',
+            'bodytext' => 'Some text',
+            'image' => '1',
+        ];
+
+        $result = $subject->_call('filterRecordFields', 'tt_content', $row);
+
+        self::assertArrayHasKey('CType', $result);
+        self::assertArrayHasKey('header', $result);
+        self::assertArrayHasKey('bodytext', $result);
+        // "image" IS in the "textpic" sub-schema, so it must be kept
+        self::assertArrayHasKey('image', $result);
+    }
+
+    #[Test]
+    public function filterRecordFieldsReturnsUnfilteredRowForUnknownTable(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, null, [], '', false);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+
+        $row = ['uid' => 1, 'pid' => 1, 'title' => 'Test'];
+
+        $result = $subject->_call('filterRecordFields', 'tx_nonexistent_table', $row);
+        self::assertSame($row, $result);
+    }
+
+    #[Test]
+    public function filterRecordFieldsKeepsSystemFieldsForTextCType(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, null, [], '', false);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+
+        $row = [
+            'uid' => 1,
+            'pid' => 1,
+            'CType' => 'text',
+            'header' => 'Test Header',
+            'sys_language_uid' => 0,
+            'l18n_parent' => 0,
+            'l10n_source' => 0,
+            'hidden' => 0,
+            'starttime' => 0,
+            'endtime' => 0,
+            'fe_group' => '',
+            'editlock' => 0,
+        ];
+
+        $result = $subject->_call('filterRecordFields', 'tt_content', $row);
+
+        self::assertArrayHasKey('sys_language_uid', $result, 'sys_language_uid must not be filtered out');
+        self::assertArrayHasKey('l18n_parent', $result, 'l18n_parent must not be filtered out');
+        self::assertArrayHasKey('l10n_source', $result, 'l10n_source must not be filtered out');
+        self::assertArrayHasKey('hidden', $result, 'hidden must not be filtered out');
+        self::assertArrayHasKey('starttime', $result, 'starttime must not be filtered out');
+        self::assertArrayHasKey('endtime', $result, 'endtime must not be filtered out');
+        self::assertArrayHasKey('fe_group', $result, 'fe_group must not be filtered out');
+        self::assertArrayHasKey('editlock', $result, 'editlock must not be filtered out');
+    }
 }
