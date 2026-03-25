@@ -627,7 +627,6 @@ class Import extends ImportExport
 
                 try {
                     $this->skipResourceConsistencyCheckForCommands($storage, $temporaryFile, $fileRecord['name']);
-                    /** @var File $file */
                     $file = $storage->addFile($temporaryFile, $importFolder, $fileRecord['name']);
                 } catch (Exception $e) {
                     $this->addError(sprintf(
@@ -736,6 +735,9 @@ class Import extends ImportExport
             $this->flatInversePageTree($this->dat['header']['pagetree'], $pageList);
             foreach ($pageList as $pageUid => $_) {
                 $pid = $this->dat['header']['records']['pages'][$pageUid]['pid'] ?? null;
+                if ($pid !== null) {
+                    $pid = (int)$pid;
+                }
                 $pid = $this->importNewIdPids[$pid ?? ''] ?? $this->pid;
                 $this->addSingle($importData, 'pages', (int)$pageUid, $pid);
                 unset($remainingPages[$pageUid]);

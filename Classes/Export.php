@@ -585,16 +585,14 @@ class Export extends ImportExport
     }
 
     /**
-     * If include fields for a specific record type are set, the data
-     * are filtered out with fields are not included in the fields.
-     * Used in tests only.
+     * Filters record fields to only include relevant columns.
      *
-     * In non-testing, records with a certain subschema (e.g. "tt_content.textpic")
-     * filter out the fields that are registered in the main schema, but are not
-     * in use for the SubSchema.
+     * When recordTypesIncludeFields is set for the table, only the explicitly
+     * listed fields are kept. Otherwise, schema-based filtering is applied,
+     * keeping only fields defined in the TCA (sub)schema.
      *
-     * In non-testing: uid and pid are not included by design, as they are stored in the "header"
-     * sub-array and taken from there.
+     * Both paths always include uid and pid via defaultRecordIncludeFields,
+     * ensuring they are part of the exported data for correct import.
      *
      * @param string $table The record type to be filtered
      * @param array $row The data to be filtered
@@ -640,9 +638,9 @@ class Export extends ImportExport
                 $validFields[] = $languageCapability->getTranslationSourceField()?->getName();
             }
         }
+        $validFields = array_unique(array_merge($validFields, $this->defaultRecordIncludeFields));
         $newRow = [];
         foreach ($row as $fieldName => $value) {
-            // Fields are not in THIS schema, but on the main schema, skip them.
             if (!in_array($fieldName, $validFields, true)) {
                 continue;
             }
@@ -882,9 +880,11 @@ class Export extends ImportExport
         // @todo: Remove by-reference and return final array
         $recordRef = $recordData['table'] . ':' . $recordData['id'];
         if (
-            $this->tcaSchemaFactory->has($recordData['table']) && !$this->isTableStatic($recordData['table'])
+            $this->tcaSchemaFactory->has($recordData['table'])
+            && !$this->isTableStatic($recordData['table'])
             && !$this->isRecordExcluded($recordData['table'], (int)$recordData['id'])
-            && (!$tokenID || $this->isSoftRefIncluded($tokenID)) && $this->inclRelation($recordData['table'])
+            && (!$tokenID || $this->isSoftRefIncluded($tokenID))
+            && $this->inclRelation($recordData['table'])
             && !isset($this->dat['records'][$recordRef])
         ) {
             $addRecords[$recordRef] = $recordData;
@@ -1003,13 +1003,13 @@ class Export extends ImportExport
         // Setting this data in the header
         $this->dat['header']['files'][$fileData['ID']] = $fileInfo;
 
-        if (!$this->saveFilesOutsideExportFile) {
-            $fileInfo['content'] = (string)file_get_contents($fileData['ID_absFile']);
-        } else {
+        if ($this->saveFilesOutsideExportFile) {
             GeneralUtility::upload_copy_move(
                 $fileData['ID_absFile'],
                 $this->getOrCreateTemporaryFolderName() . '/' . $fileMd5
             );
+        } else {
+            $fileInfo['content'] = (string)file_get_contents($fileData['ID_absFile']);
         }
         $fileInfo['content_md5'] = $fileMd5;
         $this->dat['files'][$fileData['ID']] = $fileInfo;
@@ -1021,8 +1021,7 @@ class Export extends ImportExport
     protected function exportAddFilesFromSysFilesRecords(): void
     {
         foreach ($this->dat['header']['records']['sys_file'] ?? [] as $sysFileUid => $_) {
-            $fileData = $this->dat['records']['sys_file:' . $sysFileUid]['data'];
-            $this->exportAddSysFile($fileData);
+            $this->exportAddSysFile($sysFileUid);
         }
     }
 
@@ -1030,13 +1029,13 @@ class Export extends ImportExport
      * This adds the file from a sys_file record to the export
      * - either as content or external file
      */
-    protected function exportAddSysFile(array $fileData): void
+    protected function exportAddSysFile(int $sysFileUid): void
     {
         try {
-            $file = $this->resourceFactory->createFileObject($fileData);
+            $file = $this->resourceFactory->getFileObject($sysFileUid);
             $file->checkActionPermission('read');
         } catch (\Exception $e) {
-            $this->addError('Error when trying to add file ' . $fileData['title'] . ': ' . $e->getMessage());
+            $this->addError('Error when trying to add file with UID ' . $sysFileUid . ': ' . $e->getMessage());
             return;
         }
 

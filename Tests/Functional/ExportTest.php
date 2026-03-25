@@ -407,9 +407,9 @@ final class ExportTest extends AbstractImportExportTestCase
 
         $result = $subject->_call('filterRecordFields', 'tt_content', $row);
 
-        // Non-schema fields (uid, pid) are removed
-        self::assertArrayNotHasKey('uid', $result);
-        self::assertArrayNotHasKey('pid', $result);
+        // uid and pid are always kept via defaultRecordIncludeFields
+        self::assertArrayHasKey('uid', $result);
+        self::assertArrayHasKey('pid', $result);
         // Type field is always kept
         self::assertArrayHasKey('CType', $result);
         // Fields in the "text" sub-schema are kept
@@ -436,11 +436,38 @@ final class ExportTest extends AbstractImportExportTestCase
 
         $result = $subject->_call('filterRecordFields', 'tt_content', $row);
 
+        self::assertArrayHasKey('uid', $result);
+        self::assertArrayHasKey('pid', $result);
         self::assertArrayHasKey('CType', $result);
         self::assertArrayHasKey('header', $result);
         self::assertArrayHasKey('bodytext', $result);
         // "image" IS in the "textpic" sub-schema, so it must be kept
         self::assertArrayHasKey('image', $result);
+    }
+
+    #[Test]
+    public function filterRecordFieldsKeepsUidAndPidForSysFile(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, null, [], '', false);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+
+        $row = [
+            'uid' => 1,
+            'pid' => 0,
+            'storage' => 1,
+            'type' => 2,
+            'identifier' => '/user_upload/test.jpg',
+            'name' => 'test.jpg',
+            'sha1' => 'abc123',
+        ];
+
+        $result = $subject->_call('filterRecordFields', 'sys_file', $row);
+
+        self::assertArrayHasKey('uid', $result);
+        self::assertArrayHasKey('pid', $result);
+        self::assertArrayHasKey('storage', $result);
+        self::assertArrayHasKey('identifier', $result);
+        self::assertArrayHasKey('name', $result);
     }
 
     #[Test]
