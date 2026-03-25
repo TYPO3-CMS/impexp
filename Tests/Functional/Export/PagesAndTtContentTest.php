@@ -112,6 +112,102 @@ final class PagesAndTtContentTest extends AbstractImportExportTestCase
     }
 
     #[Test]
+    public function exportPagesAndRelatedTtContentWithMetaData(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, ['setMetaData'], [
+            $this->get(ConnectionPool::class),
+            $this->get(Locales::class),
+            $this->get(Typo3Version::class),
+            $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
+        ]);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+        $subject->injectResourceFactory($this->get(ResourceFactory::class));
+        $subject->method('setMetaData')->willReturnCallback(static function () use ($subject): void {
+            $subject->_set('dat', array_merge_recursive($subject->_get('dat'), [
+                'header' => [
+                    'meta' => [
+                        'title' => 'Test Export',
+                        'description' => 'Export of pages and tt_content',
+                        'TYPO3_version' => '13.4.0',
+                        'created' => 'Tue 1. January 2030',
+                    ],
+                ],
+            ]));
+        });
+        $subject->setPid(1);
+        $subject->setLevels(1);
+        $subject->setTables(['_ALL']);
+        $subject->setRelOnlyTables(['sys_file']);
+        $subject->setRecordTypesIncludeFields($this->recordTypesIncludeFields);
+        $subject->process();
+
+        $out = $subject->render();
+
+        // @todo Use self::assertXmlStringEqualsXmlFile() instead when sqlite issue is sorted out
+        $this->assertXmlStringEqualsXmlFileWithIgnoredSqliteTypeInteger(
+            __DIR__ . '/../Fixtures/XmlExports/pages-and-ttcontent-with-meta.xml',
+            $out
+        );
+    }
+
+    #[Test]
+    public function exportHeaderChildOrderIsCorrect(): void
+    {
+        $subject = $this->getAccessibleMock(Export::class, ['setMetaData'], [
+            $this->get(ConnectionPool::class),
+            $this->get(Locales::class),
+            $this->get(Typo3Version::class),
+            $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
+        ]);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+        $subject->injectResourceFactory($this->get(ResourceFactory::class));
+        $subject->method('setMetaData')->willReturnCallback(static function () use ($subject): void {
+            $subject->_set('dat', array_merge_recursive($subject->_get('dat'), [
+                'header' => [
+                    'meta' => ['title' => 'Order Test'],
+                ],
+            ]));
+        });
+        $subject->setPid(1);
+        $subject->setLevels(1);
+        $subject->setTables(['_ALL']);
+        $subject->setRelStaticTables(['static_countries']);
+        $subject->setExcludeMap(['pages:2' => 1]);
+        $subject->setSoftrefCfg(['token123' => ['mode' => 'exclude']]);
+        $subject->setExtensionDependencies(['news']);
+        $subject->setRecordTypesIncludeFields($this->recordTypesIncludeFields);
+        $subject->process();
+
+        $out = $subject->render();
+
+        $xml = new \DOMDocument();
+        $xml->loadXML($out);
+        $xpath = new \DOMXPath($xml);
+        $headerChildren = $xpath->query('/T3RecordDocument/header/*');
+
+        $actualOrder = [];
+        foreach ($headerChildren as $node) {
+            $actualOrder[] = $node->nodeName;
+        }
+
+        $expectedOrder = [
+            'XMLversion',
+            'charset',
+            'meta',
+            'static_tables',     // relStaticTables
+            'excludeMap',
+            'softrefCfg',
+            'extensionDependencies',
+            'pagetree',
+            'records',
+            'pid_lookup',
+        ];
+        self::assertSame($expectedOrder, $actualOrder);
+    }
+
+    #[Test]
     public function exportPagesAndRelatedTtContentWithComplexConfiguration(): void
     {
         $subject = $this->getAccessibleMock(Export::class, ['setMetaData'], [

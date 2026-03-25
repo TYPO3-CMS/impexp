@@ -118,8 +118,7 @@ class Export extends ImportExport
     public function process(): void
     {
         $this->initializeExport();
-        $this->setHeaderBasics();
-        $this->setMetaData();
+        $this->setHeader();
 
         // Configure which records to export
         foreach ($this->record as $ref) {
@@ -282,7 +281,7 @@ class Export extends ImportExport
         ];
     }
 
-    protected function setHeaderBasics(): void
+    protected function setHeader(): void
     {
         // Initializing:
         foreach ($this->softrefCfg as $key => $value) {
@@ -290,20 +289,27 @@ class Export extends ImportExport
                 unset($this->softrefCfg[$key]);
             }
         }
-        // Setting in header memory:
         // Version of file format
         $this->dat['header']['XMLversion'] = '1.0';
-        // Initialize meta data array (to put it in top of file)
-        $this->dat['header']['meta'] = [];
-        // Add list of tables to consider static
-        $this->dat['header']['relStaticTables'] = $this->relStaticTables;
-        // The list of excluded records
-        $this->dat['header']['excludeMap'] = $this->excludeMap;
-        // Soft reference mode for elements
-        $this->dat['header']['softrefCfg'] = $this->softrefCfg;
-        // List of extensions the import depends on.
-        $this->dat['header']['extensionDependencies'] = $this->extensionDependencies;
         $this->dat['header']['charset'] = 'utf-8';
+        // Meta data (overridable for testing)
+        $this->setMetaData();
+        // Add list of tables to consider static
+        if ($this->relStaticTables !== []) {
+            $this->dat['header']['relStaticTables'] = $this->relStaticTables;
+        }
+        // The list of excluded records
+        if ($this->excludeMap !== []) {
+            $this->dat['header']['excludeMap'] = $this->excludeMap;
+        }
+        // Soft reference mode for elements
+        if ($this->softrefCfg !== []) {
+            $this->dat['header']['softrefCfg'] = $this->softrefCfg;
+        }
+        // List of extensions the import depends on.
+        if ($this->extensionDependencies !== []) {
+            $this->dat['header']['extensionDependencies'] = $this->extensionDependencies;
+        }
     }
 
     protected function setMetaData(): void
@@ -314,7 +320,7 @@ class Export extends ImportExport
         } else {
             $locale = new Locale();
         }
-        $this->dat['header']['meta'] = [
+        $meta = array_filter([
             'title' => $this->title,
             'description' => $this->description,
             'notes' => $this->notes,
@@ -323,7 +329,10 @@ class Export extends ImportExport
             'packager_email' => $this->getBackendUser()->user['email'],
             'TYPO3_version' => (string)$this->typo3Version,
             'created' => (new DateFormatter())->format($GLOBALS['EXEC_TIME'], 'EEE d. MMMM y', $locale),
-        ];
+        ], static fn(string $value): bool => $value !== '');
+        if ($meta !== []) {
+            $this->dat['header']['meta'] = $meta;
+        }
     }
 
     /**
@@ -543,10 +552,7 @@ class Export extends ImportExport
                 $relations = $this->referenceIndex->getRelations($table, $row, 0);
                 $relations = $this->removeRedundantSoftRefsInRelations($relations);
                 // Data:
-                $this->dat['records'][$recordIdentifier] = [
-                    'data' => $sanitizedRow,
-                    'rels' => $relations,
-                ];
+                $this->dat['records'][$recordIdentifier] = ['data' => $sanitizedRow];
                 // There are no refindex entries for l10n_source of pages and tt_content, so we have to add them here manually for now.
                 // @todo can be removed, when this can come from ReferenceIndex.
                 if (($table === 'pages' || $table === 'tt_content')) {
@@ -557,17 +563,26 @@ class Export extends ImportExport
                         $translationSourceFieldName = $languageCapability->getTranslationSourceField()?->getName();
                     }
                     if ($translationSourceFieldName && ((int)($row[$translationSourceFieldName] ?? 0)) > 0) {
-                        $this->dat['records'][$recordIdentifier]['rels'][$translationSourceFieldName]['type'] = 'db';
-                        $this->dat['records'][$recordIdentifier]['rels'][$translationSourceFieldName]['itemArray'][0] = [
+                        $relations[$translationSourceFieldName]['type'] = 'db';
+                        $relations[$translationSourceFieldName]['itemArray'][0] = [
                             'id' => $row[$translationSourceFieldName],
                             'table' => $table,
                         ];
                     }
                 }
+                if ($relations !== []) {
+                    $this->dat['records'][$recordIdentifier]['rels'] = $relations;
+                }
                 // Add information about the relations in the record in the header:
-                $this->dat['header']['records'][$table][$recordUid]['rels'] = $this->flatDbRelations($this->dat['records'][$recordIdentifier]['rels']);
+                $flatDbRelations = $this->flatDbRelations($relations);
+                if ($flatDbRelations !== []) {
+                    $this->dat['header']['records'][$table][$recordUid]['rels'] = $flatDbRelations;
+                }
                 // Add information about the softrefs to header:
-                $this->dat['header']['records'][$table][$recordUid]['softrefs'] = $this->flatSoftRefs($this->dat['records'][$recordIdentifier]['rels']);
+                $flatSoftRefs = $this->flatSoftRefs($relations);
+                if ($flatSoftRefs !== []) {
+                    $this->dat['header']['records'][$table][$recordUid]['softrefs'] = $flatSoftRefs;
+                }
             } else {
                 $this->addError('Record ' . $recordIdentifier . ' already added.');
             }
@@ -792,7 +807,7 @@ class Export extends ImportExport
             if (!is_array($record)) {
                 continue;
             }
-            foreach ($record['rels'] as $relation) {
+            foreach ($record['rels'] ?? [] as $relation) {
                 if (isset($relation['type'])) {
                     if ($relation['type'] === 'db') {
                         foreach ($relation['itemArray'] as $dbRelationData) {
@@ -924,6 +939,9 @@ class Export extends ImportExport
 
         foreach ($this->dat['records'] as &$record) {
             if (!is_array($record)) {
+                continue;
+            }
+            if (!is_array($record['rels'] ?? null)) {
                 continue;
             }
             foreach ($record['rels'] as &$relation) {

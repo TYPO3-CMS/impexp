@@ -1118,7 +1118,7 @@ class Import extends ImportExport
 
         // Record relations
         $schema = $this->tcaSchemaFactory->get($table);
-        foreach ($this->dat['records'][$table . ':' . $uid]['rels'] as $field => &$relation) {
+        foreach ($this->dat['records'][$table . ':' . $uid]['rels'] ?? [] as $field => &$relation) {
             switch ($relation['type'] ?? '') {
                 case 'db':
                 case 'file':
@@ -1261,10 +1261,10 @@ class Import extends ImportExport
             if (isset($this->importMapId[$table][$uid])) {
                 if (!$this->tcaSchemaFactory->has($table)) {
                     $this->addError(sprintf('Error: This record does not have a TCA schema! (%s:%s)', $table, $uid));
-                } elseif (is_array($this->dat['records'][$table . ':' . $uid]['rels'] ?? null)) {
+                } else {
                     $schema = $this->tcaSchemaFactory->get($table);
                     $actualUid = BackendUtility::wsMapId($table, $this->importMapId[$table][$uid]);
-                    foreach ($this->dat['records'][$table . ':' . $uid]['rels'] as $field => $relation) {
+                    foreach ($this->dat['records'][$table . ':' . $uid]['rels'] ?? [] as $field => $relation) {
                         // Field "uid_local" of sys_file_reference needs no update because the correct reference uid was already written.
                         // @see ImportExport::fixUidLocalInSysFileReferenceRecords()
                         if (isset($relation['type']) && !($table === 'sys_file_reference' && $field === 'uid_local') && $relation['type'] === 'db') {
@@ -1277,8 +1277,6 @@ class Import extends ImportExport
                             }
                         }
                     }
-                } else {
-                    $this->addError(sprintf('Error: This record does not appear to have a relation array! (%s:%s)', $table, $uid));
                 }
             } else {
                 $this->addError(sprintf('Error: This record does not appear to have been created! (%s:%s)', $table, $uid));
@@ -1368,10 +1366,10 @@ class Import extends ImportExport
             if (isset($this->importMapId[$table][$uid])) {
                 if (!$this->tcaSchemaFactory->has($table)) {
                     $this->addError(sprintf('Error: This record does not appear to have a TCA schema! (%s:%s)', $table, $uid));
-                } elseif (is_array($this->dat['records'][$table . ':' . $uid]['rels'] ?? null)) {
+                } else {
                     $schema = $this->tcaSchemaFactory->get($table);
                     $actualUid = BackendUtility::wsMapId($table, $this->importMapId[$table][$uid]);
-                    foreach ($this->dat['records'][$table . ':' . $uid]['rels'] as $field => $relation) {
+                    foreach ($this->dat['records'][$table . ':' . $uid]['rels'] ?? [] as $field => $relation) {
                         // Field "configuration" of sys_file_storage needs no update because it has not been removed
                         // and has no relations.
                         // @see Import::addSingle()
@@ -1419,8 +1417,6 @@ class Import extends ImportExport
                             }
                         }
                     }
-                } else {
-                    $this->addError(sprintf('Error: This record does not appear to have a relation array! (%s:%s)', $table, $uid));
                 }
             } else {
                 $this->addError(sprintf('Error: This record does not appear to have been created! (%s:%s)', $table, $uid));

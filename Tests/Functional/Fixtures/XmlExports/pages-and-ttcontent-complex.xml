@@ -2,14 +2,10 @@
 <T3RecordDocument>
     <header type="array">
         <XMLversion>1.0</XMLversion>
-        <meta type="array"></meta>
-        <static_tables index="relStaticTables" type="array"></static_tables>
+        <charset>utf-8</charset>
         <excludeMap type="array">
             <item index="pages:2">1</item>
         </excludeMap>
-        <softrefCfg type="array"></softrefCfg>
-        <extensionDependencies type="array"></extensionDependencies>
-        <charset>utf-8</charset>
         <pagetree type="array">
             <node index="1" type="array">
                 <uid>1</uid>
@@ -21,8 +17,6 @@
                     <uid>1</uid>
                     <pid>0</pid>
                     <title>Root</title>
-                    <relations index="rels" type="array"></relations>
-                    <softrefs type="array"></softrefs>
                 </rec>
             </table>
             <table index="tt_content" type="array">
@@ -30,7 +24,6 @@
                     <uid>1</uid>
                     <pid>1</pid>
                     <title>Test content</title>
-                    <relations index="rels" type="array"></relations>
                     <softrefs type="array">
                         <softref_element index="header_link:typolink:2487ce518ed56d22f20f259928ff43f1:0" type="array">
                             <field>header_link</field>
@@ -49,7 +42,6 @@
                     <uid>2</uid>
                     <pid>1</pid>
                     <title>Test content 2</title>
-                    <relations index="rels" type="array"></relations>
                     <softrefs type="array">
                         <softref_element index="header_link:typolink:81b8b33df54ef433f1cbc7c3e513e6c4:0" type="array">
                             <field>header_link</field>
@@ -76,7 +68,6 @@
                             <table>sys_file_storage</table>
                         </element>
                     </relations>
-                    <softrefs type="array"></softrefs>
                 </rec>
             </table>
         </records>
@@ -114,7 +105,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Root</field>
             </fieldlist>
-            <related index="rels" type="array"></related>
         </tablerow>
         <tablerow index="tt_content:1" type="array">
             <fieldlist index="data" type="array">

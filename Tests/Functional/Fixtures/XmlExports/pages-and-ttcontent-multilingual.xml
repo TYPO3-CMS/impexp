@@ -2,11 +2,6 @@
 <T3RecordDocument>
 	<header type="array">
 		<XMLversion>1.0</XMLversion>
-		<meta type="array"></meta>
-		<static_tables index="relStaticTables" type="array"></static_tables>
-		<excludeMap type="array"></excludeMap>
-		<softrefCfg type="array"></softrefCfg>
-		<extensionDependencies type="array"></extensionDependencies>
 		<charset>utf-8</charset>
 		<pagetree type="array">
 			<node index="1" type="array">
@@ -48,15 +43,11 @@
 					<uid>1</uid>
 					<pid>0</pid>
 					<title>Root</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="7" type="array">
 					<uid>7</uid>
 					<pid>1</pid>
 					<title>Dummy with 3 languages, two translations...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="10" type="array">
 					<uid>10</uid>
@@ -68,21 +59,16 @@
 							<table>pages</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="6" type="array">
 					<uid>6</uid>
 					<pid>1</pid>
 					<title>Dummy with 3 languages, only default con...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="5" type="array">
 					<uid>5</uid>
 					<pid>1</pid>
 					<title>Dummy with 3 languages, fully translated...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="8" type="array">
 					<uid>8</uid>
@@ -94,7 +80,6 @@
 							<table>pages</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="9" type="array">
 					<uid>9</uid>
@@ -106,28 +91,21 @@
 							<table>pages</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="4" type="array">
 					<uid>4</uid>
 					<pid>1</pid>
 					<title>Dummy with 3 languages, no content [DEFA...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="3" type="array">
 					<uid>3</uid>
 					<pid>1</pid>
 					<title>Dummy only default language</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="2" type="array">
 					<uid>2</uid>
 					<pid>1</pid>
 					<title>Dummy no content</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 			</table>
 			<table index="tt_content" type="array">
@@ -135,8 +113,6 @@
 					<uid>2</uid>
 					<pid>7</pid>
 					<title>Test content #2 pid=7 &#039;Dummy with 3 lang...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="7" type="array">
 					<uid>7</uid>
@@ -148,21 +124,16 @@
 							<table>tt_content</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="6" type="array">
 					<uid>6</uid>
 					<pid>6</pid>
 					<title>Test content #6 pid=6 &#039;Dummy with 3 lang...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="3" type="array">
 					<uid>3</uid>
 					<pid>5</pid>
 					<title>Test content #3 pid=5 &#039;Dummy with 3 lang...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="4" type="array">
 					<uid>4</uid>
@@ -174,7 +145,6 @@
 							<table>tt_content</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="5" type="array">
 					<uid>5</uid>
@@ -186,14 +156,11 @@
 							<table>tt_content</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 				<rec index="1" type="array">
 					<uid>1</uid>
 					<pid>3</pid>
 					<title>Test content #1 pid=3 &#039;Dummy only defaul...</title>
-					<relations index="rels" type="array"></relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 			</table>
 		</records>
@@ -256,7 +223,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Root</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="pages:7" type="array">
 			<fieldlist index="data" type="array">
@@ -272,7 +238,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Dummy with 3 languages, two translations [DEFAULT]</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="pages:10" type="array">
 			<fieldlist index="data" type="array">
@@ -321,7 +286,6 @@
                 <field index="CType">text</field>
                 <field index="header">Test content #2 pid=7 &#039;Dummy with 3 languages, two translations&#039; (default language=0)</field>
             </fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="tt_content:7" type="array">
 			<fieldlist index="data" type="array">
@@ -370,7 +334,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Dummy with 3 languages, only default content [DEFAULT]</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="tt_content:6" type="array">
 			<fieldlist index="data" type="array">
@@ -384,7 +347,6 @@
                 <field index="CType">text</field>
                 <field index="header">Test content #6 pid=6 &#039;Dummy with 3 languages, only default content&#039; (default language=0)</field>
             </fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="pages:5" type="array">
 			<fieldlist index="data" type="array">
@@ -400,7 +362,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Dummy with 3 languages, fully translated [DEFAULT]</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="pages:8" type="array">
 			<fieldlist index="data" type="array">
@@ -484,7 +445,6 @@
                 <field index="CType">text</field>
                 <field index="header">Test content #3 pid=5 &#039;Dummy with 3 languages, fully translated&#039; (default language=0)</field>
             </fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="tt_content:4" type="array">
 			<fieldlist index="data" type="array">
@@ -566,7 +526,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Dummy with 3 languages, no content [DEFAULT]</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="pages:3" type="array">
 			<fieldlist index="data" type="array">
@@ -582,7 +541,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Dummy only default language</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="tt_content:1" type="array">
 			<fieldlist index="data" type="array">
@@ -596,7 +554,6 @@
                 <field index="CType">text</field>
                 <field index="header">Test content #1 pid=3 &#039;Dummy only default language&#039; (default language=0)</field>
             </fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 		<tablerow index="pages:2" type="array">
 			<fieldlist index="data" type="array">
@@ -612,7 +569,6 @@
                 <field index="doktype" type="integer">1</field>
                 <field index="title">Dummy no content</field>
 			</fieldlist>
-			<related index="rels" type="array"></related>
 		</tablerow>
 	</records>
 </T3RecordDocument>

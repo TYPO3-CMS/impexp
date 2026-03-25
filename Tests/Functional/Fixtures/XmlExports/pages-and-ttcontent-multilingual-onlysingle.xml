@@ -2,11 +2,6 @@
 <T3RecordDocument>
 	<header type="array">
 		<XMLversion>1.0</XMLversion>
-		<meta type="array"></meta>
-		<static_tables index="relStaticTables" type="array"></static_tables>
-		<excludeMap type="array"></excludeMap>
-		<softrefCfg type="array"></softrefCfg>
-		<extensionDependencies type="array"></extensionDependencies>
 		<charset>utf-8</charset>
 		<pagetree type="array">
 			<node index="8" type="array">
@@ -25,7 +20,6 @@
 							<table>pages</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 			</table>
 			<table index="tt_content" type="array">
@@ -39,7 +33,6 @@
 							<table>tt_content</table>
 						</element>
 					</relations>
-					<softrefs type="array"></softrefs>
 				</rec>
 			</table>
 		</records>

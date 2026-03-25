@@ -3,6 +3,12 @@
     <header type="array">
         <XMLversion>1.0</XMLversion>
         <charset>utf-8</charset>
+        <meta type="array">
+            <title>Test Export</title>
+            <description>Export of pages and tt_content</description>
+            <TYPO3_version>13.4.0</TYPO3_version>
+            <created>Tue 1. January 2030</created>
+        </meta>
         <pagetree type="array">
             <node index="1" type="array">
                 <uid>1</uid>
