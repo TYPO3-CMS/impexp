@@ -109,6 +109,17 @@ class ImportController
         }
 
         $import = $this->configureImportFromFormDataAndImportIfRequested($view, $id, $inputData);
+
+        if (!$this->getBackendUser()->isAdmin()
+            && $import->getSiteConfigurations() !== []
+        ) {
+            $view->addFlashMessage(
+                $languageService->translate('importdata_siteConfigurationsAdminOnly', 'impexp.messages'),
+                $languageService->translate('importdata_siteConfigurations', 'impexp.messages'),
+                ContextualFeedbackSeverity::WARNING
+            );
+        }
+
         $importFolder = $import->getOrCreateDefaultImportExportFolder();
 
         $view->assignMultiple([

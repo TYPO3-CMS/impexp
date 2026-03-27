@@ -16,6 +16,7 @@
 namespace TYPO3\CMS\Impexp\Tests\Functional;
 
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -51,6 +52,7 @@ final class ImportExportTest extends AbstractImportExportTestCase
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $exportMock->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $exportMock->setPid(1);

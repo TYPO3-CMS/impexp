@@ -19,6 +19,7 @@ namespace TYPO3\CMS\Impexp\Tests\Functional\Export;
 
 use PHPUnit\Framework\Attributes\IgnoreDeprecations;
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -103,6 +104,7 @@ final class PagesAndTtContentWithRelationsAndSoftrefsTest extends AbstractImport
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->setPid(1);
@@ -154,6 +156,7 @@ final class PagesAndTtContentWithRelationsAndSoftrefsTest extends AbstractImport
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->injectResourceFactory($this->get(ResourceFactory::class));
@@ -216,6 +219,7 @@ final class PagesAndTtContentWithRelationsAndSoftrefsTest extends AbstractImport
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->injectResourceFactory($this->get(ResourceFactory::class));

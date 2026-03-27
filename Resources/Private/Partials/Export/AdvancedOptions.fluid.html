@@ -30,6 +30,30 @@
 <div class="form-section">
 
     <h4>
+        <f:translate key="makeadvanc_siteConfigurations" domain="impexp.messages"/>
+    </h4>
+    <div class="form-group">
+        <div class="form-check">
+            <input type="hidden" name="tx_impexp[includeSiteConfigurations]" value="" />
+            <input
+                class="form-check-input"
+                type="checkbox"
+                id="checkIncludeSiteConfigurations"
+                name="tx_impexp[includeSiteConfigurations]"
+                value="1"
+                {f:if(condition:'{inData.includeSiteConfigurations} == 1', then:'checked="checked"')}
+                {f:if(condition:'!{isAdmin}', then:'disabled="disabled"')}
+            />
+            <label class="form-check-label" for="checkIncludeSiteConfigurations">
+                <f:translate key="makeadvanc_includeSiteConfigurations" domain="impexp.messages"/>
+            </label>
+        </div>
+    </div>
+
+</div>
+<div class="form-section">
+
+    <h4>
         <f:translate key="LLL:EXT:impexp/Resources/Private/Language/locallang.xlf:makeadvanc_extensionDependencies"/>
     </h4>
     <div class="form-group">

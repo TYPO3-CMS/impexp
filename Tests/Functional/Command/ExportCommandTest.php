@@ -19,6 +19,7 @@ namespace TYPO3\CMS\Impexp\Tests\Functional\Command;
 
 use PHPUnit\Framework\Attributes\Test;
 use Symfony\Component\Console\Tester\CommandTester;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
@@ -52,6 +53,7 @@ final class ExportCommandTest extends AbstractImportExportTestCase
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->injectResourceFactory($this->get(ResourceFactory::class));
@@ -88,6 +90,7 @@ final class ExportCommandTest extends AbstractImportExportTestCase
             '--notes' => 'This export is not for production use.',
             '--dependency' => ['bootstrap_package'],
             '--save-files-outside-export-file' => false,
+            '--include-site-configurations' => false,
         ];
 
         $exportMock = $this->getAccessibleMock(
@@ -96,12 +99,14 @@ final class ExportCommandTest extends AbstractImportExportTestCase
                 'setExportFileType', 'setExportFileName', 'setPid', 'setLevels', 'setTables', 'setRecord', 'setList',
                 'setRelOnlyTables', 'setRelStaticTables', 'setExcludeMap', 'setExcludeDisabledRecords',
                 'setTitle', 'setDescription', 'setNotes', 'setExtensionDependencies', 'setSaveFilesOutsideExportFile',
+                'setIncludeSiteConfigurations',
             ],
             [
                 $this->get(ConnectionPool::class),
                 $this->get(Locales::class),
                 $this->get(Typo3Version::class),
                 $this->get(ReferenceIndex::class),
+                $this->get(SiteConfiguration::class),
             ]
         );
         $exportMock->injectDefaultUploadFolderResolver($this->get(DefaultUploadFolderResolver::class));
@@ -121,6 +126,7 @@ final class ExportCommandTest extends AbstractImportExportTestCase
         $exportMock->expects($this->once())->method('setNotes')->with(self::equalTo('This export is not for production use.'));
         $exportMock->expects($this->once())->method('setExtensionDependencies')->with(self::equalTo(['bootstrap_package']));
         $exportMock->expects($this->once())->method('setSaveFilesOutsideExportFile')->with(self::equalTo(false));
+        $exportMock->expects($this->once())->method('setIncludeSiteConfigurations')->with(self::equalTo(false));
 
         $tester = new CommandTester(new ExportCommand($exportMock));
         $tester->execute($input);

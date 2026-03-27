@@ -67,6 +67,11 @@ final class ImportContentOnPackageInitialization implements LoggerAwareInterface
             return;
         }
         try {
+            // If the package ships its own site configurations in Initialisation/Site/, defer to
+            // ImportSiteConfigurationsOnPackageInitialization which handles the remapping itself.
+            if (is_dir($packagePath . 'Initialisation/Site')) {
+                $this->importExportUtility->disableSiteConfigurationImport();
+            }
             $importResult = $this->importExportUtility->importT3DFile($importFileToUse, 0);
             $this->registry->set('extensionDataImport', $registryKeyPrefix . ':Initialisation/dataImported', 1);
             $event->addStorageEntry(__CLASS__, [

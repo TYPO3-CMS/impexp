@@ -152,6 +152,12 @@ class ExportCommand extends Command
                 InputOption::VALUE_NONE,
                 'Save files into separate folder instead of including them into the common export file. Folder name pattern is "{filename}.files".'
             )
+            ->addOption(
+                'include-site-configurations',
+                null,
+                InputOption::VALUE_NONE,
+                'Include site configurations for exported root pages.'
+            )
         ;
     }
 
@@ -182,6 +188,7 @@ class ExportCommand extends Command
             $this->export->setNotes((string)$input->getOption('notes'));
             $this->export->setExtensionDependencies($input->getOption('dependency'));
             $this->export->setSaveFilesOutsideExportFile($input->getOption('save-files-outside-export-file'));
+            $this->export->setIncludeSiteConfigurations($input->getOption('include-site-configurations'));
             $this->export->process();
             $saveFile = $this->export->saveToFile();
             $io->success('Exporting to ' . $saveFile->getPublicUrl() . ' succeeded.');

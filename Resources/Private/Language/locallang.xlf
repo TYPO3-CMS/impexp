@@ -120,6 +120,12 @@
       <trans-unit id="makeadvanc_saveFilesOutsideExportFile_limit">
         <source>(supported for "Save to filename" only)</source>
       </trans-unit>
+      <trans-unit id="makeadvanc_siteConfigurations">
+        <source>Site configurations</source>
+      </trans-unit>
+      <trans-unit id="makeadvanc_includeSiteConfigurations">
+        <source>Include site configurations for exported root pages (admin only)</source>
+      </trans-unit>
       <trans-unit id="makeadvanc_extensionDependencies">
         <source>Extension dependencies</source>
       </trans-unit>
@@ -302,6 +308,36 @@
       </trans-unit>
       <trans-unit id="importdata_metaData_1387">
         <source>Meta data</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteConfigurations">
+        <source>Site Configurations</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteConfigurationsAdminOnly">
+        <source>This import contains site configurations that will not be imported because importing site configurations requires administrator privileges.</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteIdentifier">
+        <source>Identifier</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteWebsiteTitle">
+        <source>Website Title</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteBase">
+        <source>Base</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteRootPage">
+        <source>Root Page</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteLanguages">
+        <source>Languages</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteLanguageId">
+        <source>ID</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteLanguageLocale">
+        <source>Locale</source>
+      </trans-unit>
+      <trans-unit id="importdata_siteDependencies">
+        <source>Dependencies</source>
       </trans-unit>
       <trans-unit id="importdata_messages">
         <source>Messages</source>

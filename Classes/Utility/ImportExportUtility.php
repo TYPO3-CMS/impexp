@@ -35,6 +35,7 @@ class ImportExportUtility
 {
     protected ?Import $import = null;
     protected EventDispatcherInterface $eventDispatcher;
+    protected bool $importSiteConfigurations = true;
 
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
@@ -44,6 +45,11 @@ class ImportExportUtility
     public function getImport(): ?Import
     {
         return $this->import;
+    }
+
+    public function disableSiteConfigurationImport(): void
+    {
+        $this->importSiteConfigurations = false;
     }
 
     /**
@@ -58,6 +64,9 @@ class ImportExportUtility
     {
         $this->import = GeneralUtility::makeInstance(Import::class);
         $this->import->setPid($pid);
+        if (!$this->importSiteConfigurations) {
+            $this->import->disableSiteConfigurationImport();
+        }
 
         $this->eventDispatcher->dispatch(new BeforeImportEvent($this->import, $file));
 

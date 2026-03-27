@@ -72,6 +72,7 @@ class ExportController
         ],
         'record' => [],
         'list' => [],
+        'includeSiteConfigurations' => 0,
     ];
 
     public function __construct(
@@ -149,6 +150,7 @@ class ExportController
             'hasSaveFolder' => true,
             'extensions' => $this->getExtensionList(),
             'inData' => $inputData,
+            'isAdmin' => $backendUser->isAdmin(),
         ]);
         $view->setModuleName('');
         $view->getDocHeaderComponent()->setPageBreadcrumb($pageInfo);
@@ -224,6 +226,9 @@ class ExportController
         $export->setRelOnlyTables((($inputData['external_ref']['tables'] ?? '') === '') ? [] : (array)$inputData['external_ref']['tables']);
         if (isset($inputData['save_export'], $inputData['saveFilesOutsideExportFile']) && $inputData['saveFilesOutsideExportFile'] === '1') {
             $export->setSaveFilesOutsideExportFile(true);
+        }
+        if ($this->getBackendUser()->isAdmin()) {
+            $export->setIncludeSiteConfigurations((bool)($inputData['includeSiteConfigurations'] ?? false));
         }
         $export->setTitle((string)($inputData['meta']['title'] ?? ''));
         $export->setDescription((string)($inputData['meta']['description'] ?? ''));

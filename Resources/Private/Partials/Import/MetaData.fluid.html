@@ -52,4 +52,81 @@
 
 </div>
 
+<f:if condition="{import.siteConfigurations -> f:count()} > 0 && {isAdmin}">
+    <div class="form-section">
+
+        <h3 class="form-section-headline">
+            <f:translate domain="impexp.messages" key="importdata_siteConfigurations" />
+        </h3>
+
+        <f:for each="{import.siteConfigurations}" as="siteConfig" key="siteIdentifier">
+            <h4>{siteIdentifier}</h4>
+            <div class="table-fit table-fit-wrap mb-2">
+                <table class="table table-striped table-hover">
+                    <tbody>
+                        <tr>
+                            <th class="col-nowrap">
+                                <f:translate domain="impexp.messages" key="importdata_siteRootPage" />
+                            </th>
+                            <td>{siteConfig._rootPageTitle} [{siteConfig.rootPageId}]</td>
+                        </tr>
+                        <tr>
+                            <th class="col-nowrap">
+                                <f:translate domain="impexp.messages" key="importdata_siteWebsiteTitle" />
+                            </th>
+                            <td>{siteConfig.websiteTitle}</td>
+                        </tr>
+                        <f:if condition="{siteConfig.dependencies -> f:count()} > 0">
+                            <tr>
+                                <th class="col-nowrap">
+                                    <f:translate domain="impexp.messages" key="importdata_siteDependencies" />
+                                </th>
+                                <td>
+                                    <f:for each="{siteConfig.dependencies}" as="dependency">
+                                        <div>{dependency}</div>
+                                    </f:for>
+                                </td>
+                            </tr>
+                        </f:if>
+                    </tbody>
+                </table>
+            </div>
+
+            <f:if condition="{siteConfig.languages -> f:count()} > 0">
+                <div class="table-fit table-fit-wrap mb-3">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th class="col-nowrap">
+                                    <f:translate domain="impexp.messages" key="importdata_siteLanguageId" />
+                                </th>
+                                <th class="col-nowrap">
+                                    <f:translate domain="impexp.messages" key="importdata_title" />
+                                </th>
+                                <th class="col-nowrap">
+                                    <f:translate domain="impexp.messages" key="importdata_siteLanguageLocale" />
+                                </th>
+                                <th class="col-nowrap">
+                                    <f:translate domain="impexp.messages" key="importdata_siteBase" />
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <f:for each="{siteConfig.languages}" as="language">
+                                <tr>
+                                    <td>{language.languageId}</td>
+                                    <td>{language.title}</td>
+                                    <td>{language.locale}</td>
+                                    <td>{language.base}</td>
+                                </tr>
+                            </f:for>
+                        </tbody>
+                    </table>
+                </div>
+            </f:if>
+        </f:for>
+
+    </div>
+</f:if>
+
 </html>

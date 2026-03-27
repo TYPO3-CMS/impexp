@@ -18,6 +18,8 @@ declare(strict_types=1);
 namespace TYPO3\CMS\Impexp\Tests\Functional\Export;
 
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
+use TYPO3\CMS\Core\Configuration\SiteWriter;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -89,6 +91,7 @@ final class PagesAndTtContentTest extends AbstractImportExportTestCase
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->injectResourceFactory($this->get(ResourceFactory::class));
@@ -116,6 +119,7 @@ final class PagesAndTtContentTest extends AbstractImportExportTestCase
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->injectResourceFactory($this->get(ResourceFactory::class));
@@ -135,5 +139,70 @@ final class PagesAndTtContentTest extends AbstractImportExportTestCase
             __DIR__ . '/../Fixtures/XmlExports/pages-and-ttcontent-complex.xml',
             $out
         );
+    }
+
+    #[Test]
+    public function exportPagesAndRelatedTtContentWithSiteConfiguration(): void
+    {
+        $this->get(SiteWriter::class)->write('test-site', [
+            'rootPageId' => 1,
+            'base' => 'https://example.com/',
+            'languages' => [
+                ['languageId' => 0, 'title' => 'English', 'locale' => 'en_US.UTF-8', 'base' => '/', 'flag' => 'global'],
+            ],
+        ]);
+
+        $subject = $this->getAccessibleMock(Export::class, ['setMetaData'], [
+            $this->get(ConnectionPool::class),
+            $this->get(Locales::class),
+            $this->get(Typo3Version::class),
+            $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
+        ]);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+        $subject->injectResourceFactory($this->get(ResourceFactory::class));
+        $subject->setPid(1);
+        $subject->setLevels(1);
+        $subject->setTables(['_ALL']);
+        $subject->setRelOnlyTables(['sys_file']);
+        $subject->setRecordTypesIncludeFields($this->recordTypesIncludeFields);
+        $subject->setIncludeSiteConfigurations(true);
+        $subject->process();
+
+        $out = $subject->render();
+
+        self::assertXmlStringEqualsXmlFile(
+            __DIR__ . '/../Fixtures/XmlExports/pages-and-ttcontent-with-site-config.xml',
+            $out
+        );
+    }
+
+    #[Test]
+    public function exportDoesNotIncludeSiteConfigurationForNonExportedRootPage(): void
+    {
+        $this->get(SiteWriter::class)->write('other-site', [
+            'rootPageId' => 99,
+            'base' => 'https://other.example.com/',
+            'languages' => [
+                ['languageId' => 0, 'title' => 'English', 'locale' => 'en_US.UTF-8', 'base' => '/', 'flag' => 'global'],
+            ],
+        ]);
+
+        $subject = $this->getAccessibleMock(Export::class, ['setMetaData'], [
+            $this->get(ConnectionPool::class),
+            $this->get(Locales::class),
+            $this->get(Typo3Version::class),
+            $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
+        ]);
+        $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
+        $subject->setPid(1);
+        $subject->setLevels(0);
+        $subject->setTables(['pages']);
+        $subject->setIncludeSiteConfigurations(true);
+        $subject->process();
+
+        $exportData = $subject->_get('dat');
+        self::assertArrayNotHasKey('site_configurations', $exportData['header']);
     }
 }

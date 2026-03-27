@@ -18,6 +18,7 @@ declare(strict_types=1);
 namespace TYPO3\CMS\Impexp\Tests\Functional\Export;
 
 use PHPUnit\Framework\Attributes\Test;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\ReferenceIndex;
 use TYPO3\CMS\Core\Information\Typo3Version;
@@ -76,6 +77,7 @@ final class MultilingualPagesAndTtContentTest extends AbstractImportExportTestCa
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         $subject->setPid(1);
@@ -101,6 +103,7 @@ final class MultilingualPagesAndTtContentTest extends AbstractImportExportTestCa
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         // Restrict to pid=8 which is a the UID of german page, that belongs to a page
@@ -135,6 +138,7 @@ final class MultilingualPagesAndTtContentTest extends AbstractImportExportTestCa
             $this->get(Locales::class),
             $this->get(Typo3Version::class),
             $this->get(ReferenceIndex::class),
+            $this->get(SiteConfiguration::class),
         ]);
         $subject->injectTcaSchemaFactory($this->get(TcaSchemaFactory::class));
         // Restrict to pid=8 which is a the UID of german page, that belongs to a page

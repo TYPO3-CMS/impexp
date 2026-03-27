@@ -21,6 +21,7 @@ use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Result;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Backend\Utility\BackendUtility;
+use TYPO3\CMS\Core\Configuration\SiteConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Database\Connection;
 use TYPO3\CMS\Core\Database\ConnectionPool;
@@ -93,6 +94,7 @@ class Export extends ImportExport
      */
     protected array $defaultRecordIncludeFields = ['uid', 'pid'];
     protected bool $saveFilesOutsideExportFile = false;
+    protected bool $includeSiteConfigurations = false;
     protected string $exportFileName = '';
     protected string $exportFileType = self::FILETYPE_XML;
     protected array $supportedFileTypes = [];
@@ -107,6 +109,7 @@ class Export extends ImportExport
         protected readonly Locales $locales,
         protected readonly Typo3Version $typo3Version,
         protected readonly ReferenceIndex $referenceIndex,
+        protected readonly SiteConfiguration $siteConfiguration,
     ) {}
 
     /**
@@ -218,6 +221,9 @@ class Export extends ImportExport
         // so that files from ALL added records are included!
         $this->exportAddFilesFromRelations();
         $this->exportAddFilesFromSysFilesRecords();
+        if ($this->includeSiteConfigurations) {
+            $this->exportAddSiteConfigurations();
+        }
     }
 
     /**
@@ -1071,6 +1077,26 @@ class Export extends ImportExport
     }
 
     /**
+     * Add site configurations whose root page is part of the export to the export header.
+     */
+    protected function exportAddSiteConfigurations(): void
+    {
+        $exportedPageIds = array_map('intval', array_keys($this->dat['header']['records']['pages'] ?? []));
+        if ($exportedPageIds === []) {
+            return;
+        }
+        $siteConfigurations = [];
+        foreach ($this->siteConfiguration->resolveAllExistingSites(false) as $site) {
+            if (in_array($site->getRootPageId(), $exportedPageIds, true)) {
+                $siteConfigurations[$site->getIdentifier()] = $this->siteConfiguration->load($site->getIdentifier());
+            }
+        }
+        if ($siteConfigurations !== []) {
+            $this->dat['header']['site_configurations'] = $siteConfigurations;
+        }
+    }
+
+    /**
      * This compiles and returns the data content for an exported file
      * - "xml" gives xml
      * - "t3d" and "t3d_compressed" gives serialized array, possibly compressed
@@ -1409,5 +1435,10 @@ class Export extends ImportExport
     public function setSaveFilesOutsideExportFile(bool $saveFilesOutsideExportFile): void
     {
         $this->saveFilesOutsideExportFile = $saveFilesOutsideExportFile;
+    }
+
+    public function setIncludeSiteConfigurations(bool $includeSiteConfigurations): void
+    {
+        $this->includeSiteConfigurations = $includeSiteConfigurations;
     }
 }
